@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b5269913-4eac-451f-8e9b-60c00b6f3796" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/doctrine.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/doctrine.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Command/CreateUserCommand.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Command/CreateUserCommand.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -162,7 +161,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1582122576890</updated>
-      <workItem from="1582122579460" duration="15553000" />
+      <workItem from="1582122579460" duration="17244000" />
     </task>
     <servers />
   </component>

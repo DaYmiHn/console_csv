@@ -64,56 +64,26 @@ class CreateUserCommand extends ContainerAwareCommand
     }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        ini_set("memory_limit", "3000M");
-//        $entityManager = $this->getDoctrine()->getManager();
-
-        $T = new TIMER();
-        $file = fopen($input->getOption('filePath'), "r");
-        $i=1;
+        ini_set("memory_limit", "32M");
+//        $T = new TIMER();
+        $path = $input->getOption('filePath');
+        $file = fopen($path, "r");
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
-//        while (($data = fgetcsv($file, 10000, " ")) !== FALSE)
-//        {
-//            $uploader = new Uploader();
-//            $uploader->setTimestamp($data[0]);
-//            $uploader->setRfc($data[1]);
-//            $uploader->setDomain($data[2]);
-//            $uploader->setSize($data[3]);
-//            $uploader->setPath($data[4]);
-//            $uploader->setAgent($data[5]);
-//            $uploader->setStatus($data[6]);
-//            $uploader->setMethod($data[7]);
-//            $uploader->setType($data[8]);
-//
-//            $output->writeln($i.'_-_'.memory_get_usage());
-//            if ($i>1000){
-//                $entityManager->persist($uploader);
-
-//            }
-//            if (memory_get_usage()>200000000)
-//                unset($uploader);
-//            $query = 'LOAD DATA LOCAL INFILE "D:\Desktop\dataset.csv\"
-//INTO TABLE uploader
-//FIELDS TERMINATED BY \',\'
-//ENCLOSED BY \'"\'
-//LINES TERMINATED BY \'\n\'
-//(`id`, `timestamp`, `domain`, `size`, `path`, `agent`, `status`, `method`, `type`, `rfc`);';
-        $query = "SET GLOBAL local_infile = 'ON';LOAD DATA LOCAL INFILE 'D:\\\Desktop\\\dataset.csv'
+        $query = "SET GLOBAL local_infile = 'ON';
+                LOAD DATA LOCAL INFILE '".$path."'
                 INTO TABLE uploader
                 FIELDS TERMINATED BY ' '
                 ENCLOSED BY '\"'
                 LINES TERMINATED BY '\n'
                 (`timestamp`,`rfc`, `domain`, `size`, `path`, `agent`, `status`, `method`, `type` );";
 
-            $statement = $entityManager->getConnection()->prepare($query);
-            $statement->execute();
-            $i++;
-//        }
-//        $entityManager->flush();
+        $statement = $entityManager->getConnection()->prepare($query);
+        $statement->execute();
 
         fclose($file);
 
-        $output->writeln("Время выполнения кода: " . $T->result() . " c.");
-
+//        $output->writeln("Время выполнения кода: " . $T->result() . " c.");
+        $output->writeln("Done!");
         return 0;
     }
 }
