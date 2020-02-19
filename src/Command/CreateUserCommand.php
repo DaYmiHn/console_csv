@@ -9,10 +9,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Symfony\Component\Console\Input\InputOption;
 
@@ -72,30 +71,44 @@ class CreateUserCommand extends ContainerAwareCommand
         $file = fopen($input->getOption('filePath'), "r");
         $i=1;
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
-        while (($data = fgetcsv($file, 10000, " ")) !== FALSE)
-        {
-            $uploader = new Uploader();
-            $uploader->setTimestamp($data[0]);
-            $uploader->setRfc($data[1]);
-            $uploader->setDomain($data[2]);
-            $uploader->setSize($data[3]);
-            $uploader->setPath($data[4]);
-            $uploader->setAgent($data[5]);
-            $uploader->setStatus($data[6]);
-            $uploader->setMethod($data[7]);
-            $uploader->setType($data[8]);
-
-            $output->writeln($i.'_-_'.memory_get_usage());
+//        while (($data = fgetcsv($file, 10000, " ")) !== FALSE)
+//        {
+//            $uploader = new Uploader();
+//            $uploader->setTimestamp($data[0]);
+//            $uploader->setRfc($data[1]);
+//            $uploader->setDomain($data[2]);
+//            $uploader->setSize($data[3]);
+//            $uploader->setPath($data[4]);
+//            $uploader->setAgent($data[5]);
+//            $uploader->setStatus($data[6]);
+//            $uploader->setMethod($data[7]);
+//            $uploader->setType($data[8]);
+//
+//            $output->writeln($i.'_-_'.memory_get_usage());
 //            if ($i>1000){
-                $entityManager->persist($uploader);
+//                $entityManager->persist($uploader);
 
 //            }
-            if (memory_get_usage()>200000000)
-                unset($uploader);
+//            if (memory_get_usage()>200000000)
+//                unset($uploader);
+//            $query = 'LOAD DATA LOCAL INFILE "D:\Desktop\dataset.csv\"
+//INTO TABLE uploader
+//FIELDS TERMINATED BY \',\'
+//ENCLOSED BY \'"\'
+//LINES TERMINATED BY \'\n\'
+//(`id`, `timestamp`, `domain`, `size`, `path`, `agent`, `status`, `method`, `type`, `rfc`);';
+        $query = "SET GLOBAL local_infile = 'ON';LOAD DATA LOCAL INFILE 'D:\\\Desktop\\\dataset.csv'
+                INTO TABLE uploader
+                FIELDS TERMINATED BY ' '
+                ENCLOSED BY '\"'
+                LINES TERMINATED BY '\n'
+                (`timestamp`,`rfc`, `domain`, `size`, `path`, `agent`, `status`, `method`, `type` );";
 
+            $statement = $entityManager->getConnection()->prepare($query);
+            $statement->execute();
             $i++;
-        }
-        $entityManager->flush();
+//        }
+//        $entityManager->flush();
 
         fclose($file);
 
