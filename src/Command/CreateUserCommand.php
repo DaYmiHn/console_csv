@@ -65,13 +65,14 @@ class CreateUserCommand extends ContainerAwareCommand
     }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        ini_set("memory_limit", "3000M");
 //        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
         $T = new TIMER();
         $file = fopen($input->getOption('filePath'), "r");
         $i=1;
-        while (($data = fgetcsv($file, 300000, " ")) !== FALSE)
+        $entityManager = $this->getContainer()->get('doctrine')->getManager();
+        while (($data = fgetcsv($file, 10000, " ")) !== FALSE)
         {
             $uploader = new Uploader();
             $uploader->setTimestamp($data[0]);
@@ -83,14 +84,18 @@ class CreateUserCommand extends ContainerAwareCommand
             $uploader->setStatus($data[6]);
             $uploader->setMethod($data[7]);
             $uploader->setType($data[8]);
-            $output->writeln($i);
-            $entityManager->persist($uploader);
-            if (memory_get_usage() > 30217728){
-                $entityManager->flush();
+
+            $output->writeln($i.'_-_'.memory_get_usage());
+//            if ($i>1000){
+                $entityManager->persist($uploader);
+
+//            }
+            if (memory_get_usage()>200000000)
                 unset($uploader);
-            }
+
             $i++;
         }
+        $entityManager->flush();
 
         fclose($file);
 
